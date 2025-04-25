@@ -312,7 +312,7 @@ export namespace base {
     if (argv) {
       const op = BuiltinOperation.get(str, argv.length);
       if (op) {
-        const result = op(error, argv);
+        const result = op(error, ...argv);
         if (result) return result;
       }
       error('No such operation');

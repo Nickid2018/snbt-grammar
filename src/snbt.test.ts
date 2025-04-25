@@ -2,7 +2,7 @@ import { createFloat, createInteger, parse } from './snbt';
 
 describe('test snbt parser', () => {
   it('should success', () => {
-    expect(parse('01')).toStrictEqual(createInteger(1));
+    expect(parse('0')).toStrictEqual(createInteger(0));
     expect(parse('0x18')).toStrictEqual(createInteger(0x18n, false));
     expect(parse('0  b11')).toStrictEqual(createInteger(0b11n, false));
     expect(parse('- 0b 11s')).toStrictEqual(createInteger(-0b11n));
@@ -20,7 +20,7 @@ describe('test snbt parser', () => {
     expect(parse("'hello\"'")).toStrictEqual('hello"');
     expect(parse('"hel\\rl\\to"')).toStrictEqual('hel\rl\to');
     expect(parse('"hel\\u0027l\\x22o"')).toStrictEqual('hel\u0027l\x22o');
-    expect(parse('{a:"bb",   b   :   22}')).toStrictEqual({
+    expect(parse('{a:bb,   b   :   22}')).toStrictEqual({
       a: 'bb',
       b: createInteger(22),
     });
@@ -35,7 +35,13 @@ describe('test snbt parser', () => {
       type: 'long',
       values: [20n, 0x111111111111111111n],
     });
+    expect(parse('[ {  }, {  } ]')).toStrictEqual([{}, {}]);
+    expect(parse('tt')).toStrictEqual('tt');
+    expect(parse('[uuid("0-0-0-0-0")]')).toStrictEqual([
+      { type: 'int', values: [0n, 0n, 0n, 0n] },
+    ]);
   });
   test.failing('should fail A', () => parse('-0x11'));
   test.failing('should fail B', () => parse('[L;20, 0x111111111111111111]'));
+  test.failing('should fail C', () => parse('01'));
 });

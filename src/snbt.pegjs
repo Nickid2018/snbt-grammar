@@ -1,5 +1,7 @@
 start "snbt" = l:literal { return base.postFixSNBTValue(l); }
 
+_ "whitespace" = [ \t\n\f\r\u00A0\u2007\u202F\u000B\u001C-\u001F]* // Java Character.isWhitespace
+
 // Integer Literal
 sign "sign" = "+" / "-"
 noSignSuffix = [bB] / [sS] / [iI] / [lL]
@@ -24,7 +26,7 @@ numSeq "number_sequence"
       / [bB] _ bin:binNum { return { base: base.Base.BIN, value: bin }; }
     ) { return num; } )
   / dec:decNum {
-    if (dec.startsWith('0') && dec.length === 1) {
+    if (dec.startsWith('0') && dec.length !== 1) {
       error('Leading zeros are not allowed');
     }
     return { base: base.Base.DEC, value: dec };
@@ -113,6 +115,4 @@ literal "literal"
   / !notQuote       str:quotedStringLiteral { return str; }
   / !nonMap         map:mapLiteral          { return map; }
   / !nonList        lst:listLiteral         { return lst; }
-
-// Basic Characters
-_ "whitespace" = [ \t\n\f\r\u00A0\u2007\u202F\u000B\u001C-\u001F]* // Java Character.isWhitespace
+  / unquotedStringOrBuiltin
