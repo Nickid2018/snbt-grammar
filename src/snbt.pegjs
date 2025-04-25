@@ -84,9 +84,9 @@ quotedStringLiteral "quoted_string_literal"
   / "'"  s:singleQuotedStringContents "'"  { return s.join(''); }
 
 unquotedString "unquoted_string" = [0-9A-Za-z_.+-]+
-arguments "arguments" = literal|.., _ "," _| / l:literal|1.., _ "," _| _ "," { return l; }
+arguments "arguments" = l:literal|1.., _ "," _| _ ","? { return l; }
 unquotedStringOrBuiltin "unquoted_string_or_builtin"
-  = str:$unquotedString _ argv:("(" _ args:arguments _ ")" { return args; })? {
+  = str:$unquotedString _ argv:("(" _ args:arguments? _ ")" { return args; })? {
     return base.convertUnquotedOrBuiltin(str, argv, error);
   }
 

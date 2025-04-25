@@ -37,7 +37,7 @@ describe('test snbt parser', () => {
     });
     expect(parse('[ {  }, {  } ]')).toStrictEqual([{}, {}]);
     expect(parse('tt')).toStrictEqual('tt');
-    expect(parse('[uuid("0-0-0-0-0")]')).toStrictEqual([
+    expect(parse('[uuid("0-0-0-0-0",)]')).toStrictEqual([
       { type: 'int', values: [0n, 0n, 0n, 0n] },
     ]);
   });

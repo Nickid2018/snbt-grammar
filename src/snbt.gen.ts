@@ -527,27 +527,27 @@ const item500: runtime.Expectation = {
   type: "literal",
   value: "("
 }
-const item516: runtime.Expectation = {
+const item514: runtime.Expectation = {
   type: "other",
   value: "arguments"
 }
-const item518: runtime.Expectation = {
+const item516: runtime.Expectation = {
   type: "literal",
   value: ")"
 }
-const item523: runtime.Expectation = {
+const item521: runtime.Expectation = {
   type: "other",
   value: "unquoted_string_or_builtin"
 }
-const item524: runtime.Expectation = {
+const item522: runtime.Expectation = {
   type: "other",
   value: "literal"
 }
-const item526: runtime.Expectation = {
+const item524: runtime.Expectation = {
   type: "other",
   value: "snbt"
 }
-const item527: runtime.Expectation = {
+const item525: runtime.Expectation = {
   type: "end",
   value: "end of input"
 }
@@ -1013,7 +1013,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
   ) {
     return lst;
   }
-  function item515(
+  function item513(
     location: () => runtime.LocationRange,
     range: () => runtime.Range,
     text: () => string,
@@ -1023,17 +1023,17 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
   ): any[] {
     return l;
   }
-  function item520(
+  function item518(
     location: () => runtime.LocationRange,
     range: () => runtime.Range,
     text: () => string,
     offset: () => number,
     error: (s: string, l?: runtime.LocationRange) => void,
-    args: (any | string | { [x: string]: any; } | any | any)[] | any[]
+    args: any[] | null
   ): any[] {
     return args;
   }
-  function item522(
+  function item520(
     location: () => runtime.LocationRange,
     range: () => runtime.Range,
     text: () => string,
@@ -1043,7 +1043,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
   ) {
     return base.convertUnquotedOrBuiltin(str, argv, error);
   }
-  function item525(
+  function item523(
     location: () => runtime.LocationRange,
     range: () => runtime.Range,
     text: () => string,
@@ -1063,7 +1063,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
           success: false,
           remainder: result.remainder,
           failedExpectations: [{
-            expectation: item527,
+            expectation: item525,
             remainder: result.remainder,
           }],
         };
@@ -1082,7 +1082,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
         success: false,
         remainder: result.remainder,
         failedExpectations: [{
-          expectation: item526,
+          expectation: item524,
           remainder: result.remainder,
         }],
       };
@@ -1093,7 +1093,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     if (result.success === true) {
       return {
         success: true,
-        value: item525(
+        value: item523(
           () => runtime.getLocation(parse$source, input, text, result.remainder),
           () => runtime.getRange(parse$source, input, text, result.remainder),
           () => runtime.getText(text, result.remainder),
@@ -1123,7 +1123,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
         success: false,
         remainder: result.remainder,
         failedExpectations: [{
-          expectation: item524,
+          expectation: item522,
           remainder: result.remainder,
         }],
       };
@@ -5647,7 +5647,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
         success: false,
         remainder: result.remainder,
         failedExpectations: [{
-          expectation: item523,
+          expectation: item521,
           remainder: result.remainder,
         }],
       };
@@ -5658,7 +5658,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     if (result.success === true) {
       return {
         success: true,
-        value: item522(
+        value: item520(
           () => runtime.getLocation(parse$source, input, text, result.remainder),
           () => runtime.getRange(parse$source, input, text, result.remainder),
           () => runtime.getText(text, result.remainder),
@@ -5763,7 +5763,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     if (result.success === true) {
       return {
         success: true,
-        value: item520(
+        value: item518(
           () => runtime.getLocation(parse$source, input, text, result.remainder),
           () => runtime.getRange(parse$source, input, text, result.remainder),
           () => runtime.getText(text, result.remainder),
@@ -5784,7 +5784,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       return result;
     }
   }
-  function item498(text: string): runtime.Success<[(any | string | { [x: string]: any; } | any | any)[] | any[]]> | runtime.Failure {
+  function item498(text: string): runtime.Success<[any[] | null]> | runtime.Failure {
     const failedExpectations: runtime.FailedExpectation[] = [];
     let remainder = text;
     const result0 = remainder.match(/^\(/g);
@@ -5815,7 +5815,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     } else {
       remainder = remainder.slice(result1[0].length);
     }
-    const result2 = item503(remainder);
+    const result2 = item502(remainder);
     failedExpectations.push(...result2.failedExpectations);
     if (result2.success === false) {
       return {
@@ -5842,7 +5842,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     }
     const result4 = remainder.match(/^\)/g);
     failedExpectations.push({
-      expectation: item518,
+      expectation: item516,
       remainder: remainder,
     });
     if (result4?.length !== 1) {
@@ -5861,8 +5861,21 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       failedExpectations,
     }
   }
-  function item503(text: string): runtime.Success<(any | string | { [x: string]: any; } | any | any)[] | any[]> | runtime.Failure {
+  function item502(text: string): runtime.Success<any[] | null> | runtime.Failure {
     const result = item504(text);
+    if (result.success === true) {
+      return result;
+    } else {
+      return {
+        success: true,
+        value: null,
+        remainder: text,
+        failedExpectations: result.failedExpectations,
+      };
+    }
+  }
+  function item504(text: string): runtime.Success<any[]> | runtime.Failure {
+    const result = item505(text);
     if (result.success === true) {
       return result;
     } else {
@@ -5870,125 +5883,18 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
         success: false,
         remainder: result.remainder,
         failedExpectations: [{
-          expectation: item516,
+          expectation: item514,
           remainder: result.remainder,
         }],
       };
     }
   }
-  function item504(text: string): runtime.Success<(any | string | { [x: string]: any; } | any | any)[] | any[]> | runtime.Failure {
-    const choices = [item505, item508];
-    let failedExpectations: runtime.FailedExpectation[] = [];
-    for (let func = choices.shift(); func !== undefined; func = choices.shift()) {
-      const result = func(text);
-      failedExpectations.push(...result.failedExpectations);
-      if (result.success === true) {
-        return {
-          success: true,
-          value: result.value,
-          remainder: result.remainder,
-          failedExpectations,
-        }
-      }
-    }
-    return {
-      success: false,
-      remainder: text,
-      failedExpectations,
-    };
-  }
-  function item505(text: string): runtime.Success<(any | string | { [x: string]: any; } | any | any)[]> | runtime.Failure {
-    const values: Array<any | string | { [x: string]: any; } | any | any> = [];
-    const failedExpectations: runtime.FailedExpectation[] = [];
-    let remainder = text;
-    let result;
-    do {
-      let r = remainder;
-      if (values.length > 0) {
-        result = item506(r);
-        if (result.success === false) {
-          break;
-        }
-        r = result.remainder;
-      }
-      result = item8(r);
-      failedExpectations.push(...result.failedExpectations);
-      if (result.success === false) {
-        break;
-      }
-      remainder = result.remainder;
-      values.push(result.value);
-    } while (true);
-    return { success: true, value: values, remainder, failedExpectations };
-  }
-  function item506(text: string): runtime.Success<[(string)[], ",", (string)[]]> | runtime.Failure {
-    const failedExpectations: runtime.FailedExpectation[] = [];
-    let remainder = text;
-    const result0 = item30(remainder);
-    failedExpectations.push(...result0.failedExpectations);
-    if (result0.success === false) {
-      return {
-        success: false,
-        remainder: result0.remainder,
-        failedExpectations,
-      }
-    } else {
-      remainder = result0.remainder;
-    }
-    const result1 = item507(remainder);
-    failedExpectations.push(...result1.failedExpectations);
-    if (result1.success === false) {
-      return {
-        success: false,
-        remainder: result1.remainder,
-        failedExpectations,
-      }
-    } else {
-      remainder = result1.remainder;
-    }
-    const result2 = item30(remainder);
-    failedExpectations.push(...result2.failedExpectations);
-    if (result2.success === false) {
-      return {
-        success: false,
-        remainder: result2.remainder,
-        failedExpectations,
-      }
-    } else {
-      remainder = result2.remainder;
-    }
-    return {
-      success: true,
-      value: [result0.value, result1.value, result0.value],
-      remainder,
-      failedExpectations,
-    }
-  }
-  function item507(text: string): runtime.Success<","> | runtime.Failure {
-    if (text.startsWith(",")) {
-      return {
-        success: true,
-        value: ",",
-        remainder: text.slice(1),
-        failedExpectations: [],
-      };
-    } else {
-      return {
-        success: false,
-        remainder: text,
-        failedExpectations: [{
-          expectation: item415,
-          remainder: text,
-        }],
-      };
-    }
-  }
-  function item508(text: string): runtime.Success<any[]> | runtime.Failure {
-    const result = item509(text);
+  function item505(text: string): runtime.Success<any[]> | runtime.Failure {
+    const result = item506(text);
     if (result.success === true) {
       return {
         success: true,
-        value: item515(
+        value: item513(
           () => runtime.getLocation(parse$source, input, text, result.remainder),
           () => runtime.getRange(parse$source, input, text, result.remainder),
           () => runtime.getText(text, result.remainder),
@@ -6009,10 +5915,10 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       return result;
     }
   }
-  function item509(text: string): runtime.Success<[(any | string | { [x: string]: any; } | any | any)[]]> | runtime.Failure {
+  function item506(text: string): runtime.Success<[(any | string | { [x: string]: any; } | any | any)[]]> | runtime.Failure {
     const failedExpectations: runtime.FailedExpectation[] = [];
     let remainder = text;
-    const result0 = item511(remainder);
+    const result0 = item508(remainder);
     failedExpectations.push(...result0.failedExpectations);
     if (result0.success === false) {
       return {
@@ -6037,7 +5943,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     } else {
       remainder = remainder.slice(result1[0].length);
     }
-    const result2 = remainder.match(/^,/g);
+    const result2 = remainder.match(/^(,)?/g);
     failedExpectations.push({
       expectation: item415,
       remainder: remainder,
@@ -6058,7 +5964,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       failedExpectations,
     }
   }
-  function item511(text: string): runtime.Success<(any | string | { [x: string]: any; } | any | any)[]> | runtime.Failure {
+  function item508(text: string): runtime.Success<(any | string | { [x: string]: any; } | any | any)[]> | runtime.Failure {
     const values: Array<any | string | { [x: string]: any; } | any | any> = [];
     const failedExpectations: runtime.FailedExpectation[] = [];
     let remainder = text;
@@ -6066,7 +5972,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     do {
       let r = remainder;
       if (values.length > 0) {
-        result = item512(r);
+        result = item509(r);
         if (result.success === false) {
           break;
         }
@@ -6086,7 +5992,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       return { success: true, value: values, remainder, failedExpectations };
     }
   }
-  function item512(text: string): runtime.Success<[(string)[], ",", (string)[]]> | runtime.Failure {
+  function item509(text: string): runtime.Success<[(string)[], ",", (string)[]]> | runtime.Failure {
     const failedExpectations: runtime.FailedExpectation[] = [];
     let remainder = text;
     const result0 = item30(remainder);
@@ -6100,7 +6006,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
     } else {
       remainder = result0.remainder;
     }
-    const result1 = item513(remainder);
+    const result1 = item510(remainder);
     failedExpectations.push(...result1.failedExpectations);
     if (result1.success === false) {
       return {
@@ -6129,7 +6035,7 @@ export function parse(input: string, options: runtime.ParseOptions = new runtime
       failedExpectations,
     }
   }
-  function item513(text: string): runtime.Success<","> | runtime.Failure {
+  function item510(text: string): runtime.Success<","> | runtime.Failure {
     if (text.startsWith(",")) {
       return {
         success: true,
