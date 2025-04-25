@@ -1,12 +1,55 @@
-export interface IntegerValue {
+export class IntegerValue {
   value: bigint;
   signed: boolean;
-  type: 'byte' | 'short' | 'int' | 'long';
+  type: 'byte' | 'short' | 'int' | 'long' | null;
+
+  private resolved: boolean = false;
+
+  constructor(
+    value: bigint,
+    signed: boolean,
+    type: 'byte' | 'short' | 'int' | 'long' | null
+  ) {
+    this.value = value;
+    this.signed = signed;
+    this.type = type;
+  }
+
+  _resolve(
+    outType?: 'byte' | 'short' | 'int' | 'long',
+    error?: base.ParsingError
+  ): IntegerValue {
+    if (this.resolved) return this;
+    const resolveType = this.type ?? outType ?? 'int';
+    const type = base.getBitsForInteger(resolveType as base.IntegerTypeSuffix);
+    if (this.signed) {
+      if (
+        this.value > (1n << (type - 1n)) - 1n ||
+        this.value < -(1n << (type - 1n))
+      ) {
+        error?.('Value out of range.');
+        return this;
+      }
+    } else {
+      if (this.value > (1n << type) - 1n || this.value < 0n) {
+        error?.('Value out of range.');
+        return this;
+      }
+    }
+    this.value = BigInt.asIntN(Number(type), this.value);
+    this.resolved = true;
+    return this;
+  }
 }
 
-export interface FloatValue {
+export class FloatValue {
   value: number;
   type: 'float' | 'double';
+}
+
+export class IntegerList {
+  values: bigint[];
+  type: 'byte' | 'short' | 'int' | 'long';
 }
 
 export function createInteger(
@@ -14,11 +57,7 @@ export function createInteger(
   signed?: boolean,
   type?: 'byte' | 'short' | 'int' | 'long'
 ): IntegerValue {
-  return {
-    value: BigInt(num),
-    signed: signed ?? true,
-    type: type ?? 'int',
-  };
+  return new IntegerValue(BigInt(num), signed ?? true, type ?? null)._resolve();
 }
 
 export function createFloat(
@@ -36,17 +75,28 @@ export function createFloat(
   };
 }
 
+export type SNBTValue =
+  | IntegerValue
+  | FloatValue
+  | IntegerList
+  | string
+  | boolean
+  | { [p: string]: SNBTValue }
+  | Array<SNBTValue>;
+
 export namespace base {
-  type SyntaxError = (s: string) => void;
+  export type ParsingError = (s: string) => void;
 
-  export enum TypeSuffix {
-    BYTE = 8,
-    SHORT = 16,
-    INTEGER = 32,
-    LONG = 64,
+  export enum IntegerTypeSuffix {
+    BYTE = 'byte',
+    SHORT = 'short',
+    INTEGER = 'int',
+    LONG = 'long',
+  }
 
-    FLOAT = 'f',
-    DOUBLE = 'd',
+  export enum FloatTypeSuffix {
+    FLOAT = 'float',
+    DOUBLE = 'double',
   }
 
   export enum SignedPrefix {
@@ -69,7 +119,7 @@ export namespace base {
     sign: Sign | string;
     suffix: {
       signed: SignedPrefix | null;
-      type: TypeSuffix | null;
+      type: IntegerTypeSuffix | null;
     };
     base: number;
     value: string;
@@ -83,34 +133,115 @@ export namespace base {
       sign: Sign | string;
       value: string;
     };
-    suf: TypeSuffix | null;
+    suf: FloatTypeSuffix | null;
   }
 
-  export function convertToTypeSuffix(suffix: string) {
+  export function getBitsForInteger(suffix: IntegerTypeSuffix) {
+    switch (suffix) {
+      case IntegerTypeSuffix.BYTE:
+        return 8n;
+      case IntegerTypeSuffix.SHORT:
+        return 16n;
+      case IntegerTypeSuffix.INTEGER:
+        return 32n;
+      case IntegerTypeSuffix.LONG:
+        return 64n;
+    }
+  }
+
+  export namespace BuiltinOperation {
+    const registry = new Map<
+      string,
+      (error: ParsingError, ...args: SNBTValue[]) => SNBTValue
+    >();
+
+    export function register(
+      name: string,
+      fn: (error: ParsingError, ...args: SNBTValue[]) => SNBTValue,
+      length: number
+    ) {
+      registry.set(`${length}-${name}`, fn);
+    }
+
+    export function get(name: string, length: number) {
+      return registry.get(`${length}-${name}`);
+    }
+
+    register(
+      'bool',
+      (error: ParsingError, val: SNBTValue) => {
+        if (typeof val === 'boolean') return val;
+        if (val instanceof IntegerValue) {
+          return val.value !== 0n;
+        }
+        if (val instanceof FloatValue) {
+          return val.value !== 0;
+        }
+        error('Expect number or boolean');
+      },
+      1
+    );
+
+    register(
+      'uuid',
+      (error: ParsingError, uuid: SNBTValue) => {
+        if (typeof uuid !== 'string') {
+          error('Expect string uuid');
+          return ''; // will not return
+        }
+        if (uuid.length > 36) error('Expect string uuid');
+        const split = uuid.split('-');
+        if (split.length !== 5) error('Expect string uuid');
+        const uuidNum =
+          ((BigInt(`0x${split[0]}`) & 0xffffffffn) << 96n) |
+          ((BigInt(`0x${split[1]}`) & 0xffffn) << 80n) |
+          ((BigInt(`0x${split[2]}`) & 0xffffn) << 64n) |
+          ((BigInt(`0x${split[3]}`) & 0xffffn) << 48n) |
+          (BigInt(`0x${split[4]}`) & 0xffffffffffffn);
+        return {
+          values: [
+            BigInt.asIntN(32, uuidNum >> 96n),
+            BigInt.asIntN(32, uuidNum >> 64n),
+            BigInt.asIntN(32, uuidNum >> 32n),
+            BigInt.asIntN(32, uuidNum),
+          ],
+          type: 'int',
+        };
+      },
+      1
+    );
+  }
+
+  export function convertToIntTypeSuffix(suffix: string) {
     switch (suffix) {
       case 'b':
       case 'B':
-        return TypeSuffix.BYTE;
+        return IntegerTypeSuffix.BYTE;
       case 's':
       case 'S':
-        return TypeSuffix.SHORT;
+        return IntegerTypeSuffix.SHORT;
       case 'i':
       case 'I':
-        return TypeSuffix.INTEGER;
+        return IntegerTypeSuffix.INTEGER;
       case 'l':
       case 'L':
-        return TypeSuffix.LONG;
+        return IntegerTypeSuffix.LONG;
+    }
+  }
+
+  export function convertToFloatTypeSuffix(suffix: string) {
+    switch (suffix) {
       case 'f':
       case 'F':
-        return TypeSuffix.FLOAT;
+        return FloatTypeSuffix.FLOAT;
       case 'd':
       case 'D':
-        return TypeSuffix.DOUBLE;
+        return FloatTypeSuffix.DOUBLE;
     }
     return null;
   }
 
-  export function checkNum(num: string, error: SyntaxError): string {
+  export function checkNum(num: string, error: ParsingError): string {
     if (num.startsWith('_') || num.endsWith('_'))
       error('Underscore is not allowed');
     return num;
@@ -122,33 +253,9 @@ export namespace base {
     return num;
   }
 
-  function toIntName(suf: TypeSuffix) {
-    switch (suf) {
-      case TypeSuffix.BYTE:
-        return 'byte';
-      case TypeSuffix.SHORT:
-        return 'short';
-      case TypeSuffix.INTEGER:
-        return 'int';
-      case TypeSuffix.LONG:
-        return 'long';
-    }
-  }
-
-  function toFloatName(suf: TypeSuffix) {
-    switch (suf) {
-      case TypeSuffix.FLOAT:
-      case TypeSuffix.FLOAT.toUpperCase():
-        return 'float';
-      case TypeSuffix.DOUBLE:
-      case TypeSuffix.DOUBLE.toUpperCase():
-        return 'double';
-    }
-  }
-
   export function convertNum(
     num: IntegerLiteral,
-    error: SyntaxError
+    error: ParsingError
   ): IntegerValue {
     const signedPrefix = num.suffix
       ? num.suffix.signed
@@ -160,32 +267,18 @@ export namespace base {
       error('Expected non negative number');
     num.value = cleanNumber(num.value);
     const converted = `${num.base === Base.HEX ? '0x' : num.base === Base.BIN ? '0b' : ''}${num.value}`;
-    const suf = num.suffix?.type ? num.suffix.type : TypeSuffix.INTEGER;
-    const type = BigInt(suf);
     let integer = BigInt(converted);
     if (signed) {
       if (num.sign === Sign.MINUS) integer = -integer;
-      if (integer > (1n << (type - 1n)) - 1n || integer < -(1n << (type - 1n)))
-        error('Value out of range.');
-      return {
-        value: BigInt.asIntN(Number(type), integer),
-        signed,
-        type: toIntName(suf),
-      };
+      return new IntegerValue(integer, signed, num.suffix?.type ?? null);
     } else {
-      if (integer > (1n << type) - 1n || integer < 0n)
-        error('Value out of range.');
-      return {
-        value: BigInt.asUintN(Number(type), integer),
-        signed,
-        type: toIntName(suf),
-      };
+      return new IntegerValue(integer, signed, num.suffix?.type ?? null);
     }
   }
 
   export function convertFloat(
     num: FloatLiteral,
-    error: SyntaxError
+    error: ParsingError
   ): FloatValue {
     num.integer = cleanNumber(num.integer);
     num.frac = cleanNumber(num.frac);
@@ -193,7 +286,72 @@ export namespace base {
     const converted = `${num.sign}${num.integer}.${num.frac}${num.exp ? `e${num.exp.sign}${num.exp.value}` : ''}`;
     let float = parseFloat(converted);
     if (!isFinite(float)) error('Infinity not allowed');
-    const suf = num.suf ? num.suf : TypeSuffix.DOUBLE;
-    return createFloat(float, toFloatName(suf));
+    const suf = num.suf ? num.suf : FloatTypeSuffix.DOUBLE;
+    return createFloat(float, suf);
+  }
+
+  export function convertHexString(str: string, error: ParsingError): string {
+    const hex = parseInt(str, 16);
+    if (hex > 0x10ffff)
+      error(
+        `Invalid codepoint U+${hex.toString(16).toUpperCase().padStart(8, '0')}`
+      );
+    return String.fromCodePoint(hex);
+  }
+
+  export function convertUnicodeNameString(str: string, error: ParsingError) {
+    return str; // TODO
+  }
+
+  export function convertUnquotedOrBuiltin(
+    str: string,
+    argv: SNBTValue[] | null,
+    error: ParsingError
+  ) {
+    if (str.charAt(0).match(/[-+.0-9]/)) error('Invalid unquoted start');
+    if (argv) {
+      const op = BuiltinOperation.get(str, argv.length);
+      if (op) {
+        const result = op(error, argv);
+        if (result) return result;
+      }
+      error('No such operation');
+    }
+    if (str.toLowerCase() === 'true') return true;
+    if (str.toLowerCase() === 'false') return false;
+    return str;
+  }
+
+  export function convertIntList(
+    prefix: string,
+    list: IntegerValue[],
+    error: ParsingError
+  ) {
+    const type = convertToIntTypeSuffix(prefix);
+    if (
+      list
+        .filter(l => !!l.type)
+        .some(
+          l =>
+            getBitsForInteger(l.type as IntegerTypeSuffix) >
+            getBitsForInteger(type)
+        )
+    )
+      error('Invalid array element type');
+    return {
+      type: type,
+      values: list.map(l => l._resolve(type).value),
+    };
+  }
+
+  export function postFixSNBTValue(val: SNBTValue) {
+    if (val instanceof IntegerValue) val._resolve();
+    else if (Array.isArray(val)) val.map(postFixSNBTValue);
+    else if (typeof val === 'object') {
+      for (const key in val) {
+        postFixSNBTValue(val[key]);
+      }
+    }
+    return val;
   }
 }
