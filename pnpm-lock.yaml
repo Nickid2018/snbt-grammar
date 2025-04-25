@@ -27,6 +27,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.14.1)(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.3))
+      peggy-ts:
+        specifier: github:hudlow/peggy-ts
+        version: https://codeload.github.com/hudlow/peggy-ts/tar.gz/39ed7b91e553fe9912a5039ed28b5a8b5e99273f(peggy@4.2.0)
       prettier:
         specifier: ^3.4.2
         version: 3.5.3
@@ -498,6 +501,9 @@ packages:
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
 
+  '@ts-morph/common@0.24.0':
+    resolution: {integrity: sha512-c1xMmNHWpNselmpIqursHeOHHBTIsJLbB+NuovbTTRCNiTLEr/U9dbJ8qy0jd/O2x5pc3seWuOUN5R2IoOTp8A==}
+
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
 
@@ -741,6 +747,9 @@ packages:
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
+
+  code-block-writer@13.0.3:
+    resolution: {integrity: sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg==}
 
   collect-v8-coverage@1.0.2:
     resolution: {integrity: sha512-lHl4d5/ONEbLlJvaJNtsF/Lz+WvB07u2ycqTYbdrq7UypDXailES4valYb2eWiJFxZlVmpGekfqoxQhzyFdT4Q==}
@@ -1336,6 +1345,11 @@ packages:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  mkdirp@3.0.1:
+    resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -1395,6 +1409,9 @@ packages:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
     engines: {node: '>=8'}
 
+  path-browserify@1.0.1:
+    resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
+
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
@@ -1409,6 +1426,12 @@ packages:
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+
+  peggy-ts@https://codeload.github.com/hudlow/peggy-ts/tar.gz/39ed7b91e553fe9912a5039ed28b5a8b5e99273f:
+    resolution: {tarball: https://codeload.github.com/hudlow/peggy-ts/tar.gz/39ed7b91e553fe9912a5039ed28b5a8b5e99273f}
+    version: 0.0.5
+    peerDependencies:
+      peggy: ^4.0.3
 
   peggy@4.2.0:
     resolution: {integrity: sha512-ZjzyJYY8NqW8JOZr2PbS/J0UH/hnfGALxSDsBUVQg5Y/I+ZaPuGeBJ7EclUX2RvWjhlsi4pnuL1C/K/3u+cDeg==}
@@ -1623,6 +1646,9 @@ packages:
         optional: true
       esbuild:
         optional: true
+
+  ts-morph@23.0.0:
+    resolution: {integrity: sha512-FcvFx7a9E8TUe6T3ShihXJLiJOiqyafzFKUO4aqIHDUCIvADdGNShcbc2W5PMr3LerXRv7mafvFZ9lRENxJmug==}
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -2269,6 +2295,13 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
+  '@ts-morph/common@0.24.0':
+    dependencies:
+      fast-glob: 3.3.3
+      minimatch: 9.0.5
+      mkdirp: 3.0.1
+      path-browserify: 1.0.1
+
   '@tsconfig/node10@1.0.11': {}
 
   '@tsconfig/node12@1.0.11': {}
@@ -2567,6 +2600,8 @@ snapshots:
       wrap-ansi: 7.0.0
 
   co@4.6.0: {}
+
+  code-block-writer@13.0.3: {}
 
   collect-v8-coverage@1.0.2: {}
 
@@ -3322,6 +3357,8 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  mkdirp@3.0.1: {}
+
   ms@2.1.3: {}
 
   natural-compare@1.4.0: {}
@@ -3382,6 +3419,8 @@ snapshots:
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
 
+  path-browserify@1.0.1: {}
+
   path-exists@4.0.0: {}
 
   path-is-absolute@1.0.1: {}
@@ -3389,6 +3428,12 @@ snapshots:
   path-key@3.1.1: {}
 
   path-parse@1.0.7: {}
+
+  peggy-ts@https://codeload.github.com/hudlow/peggy-ts/tar.gz/39ed7b91e553fe9912a5039ed28b5a8b5e99273f(peggy@4.2.0):
+    dependencies:
+      peggy: 4.2.0
+      source-map-generator: 0.8.0
+      ts-morph: 23.0.0
 
   peggy@4.2.0:
     dependencies:
@@ -3578,6 +3623,11 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       babel-jest: 29.7.0(@babel/core@7.26.10)
+
+  ts-morph@23.0.0:
+    dependencies:
+      '@ts-morph/common': 0.24.0
+      code-block-writer: 13.0.3
 
   ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.3):
     dependencies:

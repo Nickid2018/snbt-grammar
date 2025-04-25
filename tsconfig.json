@@ -5,6 +5,10 @@
     "esModuleInterop": true,
     "outDir": "./dist",
     "moduleResolution": "node",
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
