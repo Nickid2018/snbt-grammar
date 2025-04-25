@@ -7,6 +7,6 @@ export type IntegerValue = base.IntegerValue;
 export type FloatValue = base.FloatValue;
 export type IntegerList = base.IntegerList;
 export type SNBTValue = base.SNBTValue;
-export const parse = gen.parse;
+export const parse: (...args: Parameters<typeof gen.parse>) => SNBTValue = gen.parse;
 export const createInteger = base.createInteger;
 export const createFloat = base.createFloat;
