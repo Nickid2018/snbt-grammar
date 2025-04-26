@@ -85,7 +85,7 @@ export type SNBTValue =
   | Array<SNBTValue>;
 
 export namespace base {
-  export type ParsingError = (s: string) => void;
+  export type ParsingError = (s: string, where?: any) => void;
 
   export enum IntegerTypeSuffix {
     BYTE = 'byte',

@@ -1,11 +1,16 @@
-start "snbt" = l:literal { return base.postFixSNBTValue(l); }
+literal "literal"
+  = &startNumber num:(float / integer)   { return num._resolve ? num._resolve() : num; }
+  / &quote       str:quotedStringLiteral { return str; }
+  / &map         map:mapLiteral          { return map; }
+  / &list        lst:listLiteral         { return lst; }
+  / unquotedStringOrBuiltin
 
 _ "whitespace" = [ \t\n\f\r\u00A0\u2007\u202F\u000B\u001C-\u001F]* // Java Character.isWhitespace
 
 // Integer Literal
 sign "sign" = "+" / "-"
 noSignSuffix = [bB] / [sS] / [iI] / [lL]
-notStartNumber = [^+.0-9-]
+startNumber = [.0-9-+]
 
 intSuffix "integer_suffix"
   = [uU] _ suf:$noSignSuffix? { return { signed: base.SignedPrefix.UNSIGNED, type: base.convertToIntTypeSuffix(suf) }; }
@@ -37,22 +42,18 @@ integer "integer_literal" = sign:sign? _ num:numSeq _ suf:intSuffix? {
 
 // Floating Point Literal
 floatSuffix = [fF] / [dD]
-floatExpPart "float_exponent_part" = [eE] _ sign:sign? _ dec:decNum {
-  return { sign: sign || base.Sign.PLUS, value: dec };
-}
+floatExpPart "float_exponent_part" = [eE] _ sign:sign? _ dec:decNum { return { sign: sign || base.Sign.PLUS, value: dec }; }
 floatWholePart "float_whole_part" = decNum
 floatFracPart "float_fraction_part" = decNum
 floatSeq "float_sequence"
-  = integer:floatWholePart _ "." _ frac:floatFracPart? _ exp:floatExpPart? _ suf:floatSuffix? { return { integer, frac, exp, suf: base.convertToFloatTypeSuffix(suf) }; }
-  / "." _ frac:floatFracPart _ exp:floatExpPart? _ suf:floatSuffix? { return { integer: '0', frac, exp, suf: base.convertToFloatTypeSuffix(suf) }; }
-  / integer:floatWholePart _ exp:floatExpPart _ suf:floatSuffix? { return { integer, frac: '0', exp, suf: base.convertToFloatTypeSuffix(suf) }; }
-  / integer:floatWholePart _ exp:floatExpPart? _ suf:floatSuffix { return { integer, frac: '0', exp, suf: base.convertToFloatTypeSuffix(suf) }; }
-float "float_literal" = sign:sign? _ float:floatSeq {
-  return base.convertFloat({ sign: sign || base.Sign.PLUS, ...float }, error);
-}
+  = integer:floatWholePart _ "." _ frac:floatFracPart? _ exp:floatExpPart? _ suf:floatSuffix? { return { integer,      frac,      exp, suf: base.convertToFloatTypeSuffix(suf) }; }
+  /                          "." _ frac:floatFracPart  _ exp:floatExpPart? _ suf:floatSuffix? { return { integer: '0', frac,      exp, suf: base.convertToFloatTypeSuffix(suf) }; }
+  / integer:floatWholePart                             _ exp:floatExpPart  _ suf:floatSuffix? { return { integer,      frac: '0', exp, suf: base.convertToFloatTypeSuffix(suf) }; }
+  / integer:floatWholePart                             _ exp:floatExpPart? _ suf:floatSuffix  { return { integer,      frac: '0', exp, suf: base.convertToFloatTypeSuffix(suf) }; }
+float "float_literal" = sign:sign? _ float:floatSeq { return base.convertFloat({ sign: sign || base.Sign.PLUS, ...float }, error); }
 
 // String Literal
-notQuote = [^'"]
+quote = ['"]
 hexLiteral "hexadecimal_literal" = [0-9A-Fa-f]
 stringHex2 "string_hex_2" = hexLiteral|2|
 stringHex4 "string_hex_4" = hexLiteral|4|
@@ -91,7 +92,7 @@ unquotedStringOrBuiltin "unquoted_string_or_builtin"
   }
 
 // Map
-nonMap = [^{]
+map = [{]
 mapKey "map_key" = quotedStringLiteral / $unquotedString
 mapEntry "map_entry" = key:mapKey _ ":" _ value:literal { return { [key]: value }; }
 mapEntries "map_entries" = m:mapEntry|1.., _ "," _| _ ","? { return m; }
@@ -100,7 +101,7 @@ mapLiteral "map_literal" = "{" _ entries:mapEntries? _ "}" {
 }
 
 // List
-nonList = [^[]
+list = [[]
 listEntries "list_entries" = l:literal|1.., _ "," _| _ ","? { return l; }
 arrayPrefix "array_prefix" = [BLI]
 intArrayEntries "int_array_entries" = i:integer|1.., _ "," _| _ ","? { return i; }
@@ -109,10 +110,3 @@ listLiteral "list_literal"
       pre:arrayPrefix _ ";" _ entries:intArrayEntries { return base.convertIntList(pre, entries, error); }
     / listEntries
   ) _ "]" { return val; }
-
-literal "literal"
-  = !notStartNumber num:(float / integer)   { return num; }
-  / !notQuote       str:quotedStringLiteral { return str; }
-  / !nonMap         map:mapLiteral          { return map; }
-  / !nonList        lst:listLiteral         { return lst; }
-  / unquotedStringOrBuiltin
