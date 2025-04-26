@@ -1,7 +1,7 @@
 {
-  "name": "snbt",
+  "name": "snbt-grammar",
   "version": "1.0.0",
-  "description": "",
+  "description": "A library for parsing SNBT (Stringified NBT) format",
   "scripts": {
     "gen-snbt": "ts-node ./build-snbt.mjs",
     "gen-highlighter": "ts-node ./build-highlighter.mjs",
@@ -9,7 +9,11 @@
     "minify": "rollup -c && uglifyjs ./dist/snbt-grammar.js -o ./dist/snbt-grammar.min.js --compress --mangle",
     "build": "pnpm run gen-snbt && pnpm run gen-highlighter && pnpm run minify"
   },
-  "keywords": [],
+  "keywords": [
+    "SNBT",
+    "Parser",
+    "Grammar"
+  ],
   "author": "Nickid2018",
   "license": "MIT",
   "files": [
@@ -18,6 +22,8 @@
     "dist/snbt-grammar.min.js",
     "dist/snbt-grammar.d.ts"
   ],
+  "types": "dist/snbt-grammar.d.ts",
+  "main": "dist/snbt-grammar.js",
   "packageManager": "pnpm@10.5.0",
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
