@@ -1,4 +1,4 @@
-import { createFloat, createInteger, parse, highlights } from './snbt';
+import { createFloat, createInteger, parse, highlights } from './';
 
 describe('test snbt parser', () => {
   it('should success', () => {

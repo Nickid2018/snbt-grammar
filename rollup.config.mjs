@@ -5,7 +5,7 @@ export default [
   {
     input: 'dist/index.js',
     output: {
-      file: 'dist/snbt-grammar.js',
+      file: 'dist/snbt.js',
       format: 'cjs',
       sourcemap: true,
     },
@@ -14,7 +14,7 @@ export default [
   {
     input: 'dist/index.d.ts',
     output: {
-      file: 'dist/snbt-grammar.d.ts',
+      file: 'dist/snbt.d.ts',
       format: 'es',
     },
     plugins: [dts()],

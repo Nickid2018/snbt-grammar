@@ -1,14 +1,14 @@
 import pkg from 'peggy';
 import fs from 'node:fs';
 
-const source = fs.readFileSync('./src/snbt.pegjs').toString();
+const source = fs.readFileSync('./src/snbt-parser.pegjs').toString();
 let parser = pkg.generate(source, {
   output: 'source',
   format: 'es',
   cache: true,
 });
 parser = `// AUTO GENERATED FILE by snbt.pegjs - DO NOT EDIT
-import { base } from './snbt.base';
+import { base } from './snbt-parser.base';
 ${parser}
 `;
 parser = parser.replaceAll(
@@ -23,4 +23,4 @@ parser = parser.replaceAll(
   'function peg$SyntaxError(message, expected, found, location)',
   'function peg$SyntaxError(message, expected, found, location): void'
 );
-fs.writeFileSync('./src/snbt.gen.ts', parser);
+fs.writeFileSync('./src/snbt-parser.gen.ts', parser);
