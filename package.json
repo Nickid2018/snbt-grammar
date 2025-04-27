@@ -1,5 +1,5 @@
 {
-  "name": "@loli-works/snbt",
+  "name": "@mc-wiki/snbt",
   "version": "1.0.0",
   "description": "A library for parsing SNBT (Stringified NBT) format",
   "scripts": {
@@ -42,5 +42,13 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.0",
     "uglify-js": "^3.19.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nickid2018/snbt-grammar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nickid2018/snbt-grammar/issues"
+  },
+  "homepage": "https://github.com/Nickid2018/snbt-grammar#readme"
 }
