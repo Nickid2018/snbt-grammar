@@ -343,15 +343,4 @@ export namespace base {
       values: list.map(l => l._resolve(type).value),
     };
   }
-
-  export function postFixSNBTValue(val: SNBTValue) {
-    if (val instanceof IntegerValue) val._resolve();
-    else if (Array.isArray(val)) val.map(postFixSNBTValue);
-    else if (typeof val === 'object') {
-      for (const key in val) {
-        postFixSNBTValue(val[key]);
-      }
-    }
-    return val;
-  }
 }
