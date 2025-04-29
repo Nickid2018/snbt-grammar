@@ -109,4 +109,4 @@ listLiteral "list_literal"
   = "[" _ val:(
       pre:arrayPrefix _ ";" _ entries:intArrayEntries { return base.convertIntList(pre, entries, error); }
     / listEntries
-  ) _ "]" { return val; }
+  )? _ "]" { return val ?? []; }

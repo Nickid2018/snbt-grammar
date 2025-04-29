@@ -1,6 +1,6 @@
 {
   "name": "@mc-wiki/snbt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library for parsing SNBT (Stringified NBT) format",
   "scripts": {
     "gen-parser": "ts-node ./build-parser.mjs",

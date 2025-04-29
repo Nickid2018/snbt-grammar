@@ -2492,22 +2492,20 @@ function peg$parse(input, options) {
       if (s3 === peg$FAILED) {
         s3 = peg$parselistEntries();
       }
-      if (s3 !== peg$FAILED) {
-        s4 = peg$parse_();
-        if (input.charCodeAt(peg$currPos) === 93) {
-          s5 = peg$c17;
-          peg$currPos++;
-        } else {
-          s5 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$e80); }
-        }
-        if (s5 !== peg$FAILED) {
-          s1 = [s1, s2, s3, s4, s5];
-          s0 = s1;
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
-        }
+      if (s3 === peg$FAILED) {
+        s3 = null;
+      }
+      s4 = peg$parse_();
+      if (input.charCodeAt(peg$currPos) === 93) {
+        s5 = peg$c17;
+        peg$currPos++;
+      } else {
+        s5 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e80); }
+      }
+      if (s5 !== peg$FAILED) {
+        s1 = [s1, s2, s3, s4, s5];
+        s0 = s1;
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;

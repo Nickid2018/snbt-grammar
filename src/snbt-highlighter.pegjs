@@ -92,4 +92,4 @@ list = [[]
 listEntries "list_entries" = literal|1.., _ "," _| _ ","?
 arrayPrefix "array_prefix" = [BLI] { push(tokens, location(), 'arrayType'); }
 intArrayEntries "int_array_entries" = integer|1.., _ "," _| _ ","?
-listLiteral "list_literal" = "[" _ ( arrayPrefix _ ";" _ intArrayEntries / listEntries) _ "]"
+listLiteral "list_literal" = "[" _ ( arrayPrefix _ ";" _ intArrayEntries / listEntries)? _ "]"
