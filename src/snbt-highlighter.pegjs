@@ -61,7 +61,7 @@ stringEscapeSeq "string_escape_sequence"
   / "U" stringHex8
   / "N" "{" unicodeName "}"
 stringPlainContents "string_plain_contents" = [^"'\\]+
-stringContents "string_contents" = stringPlainContents / "\\" stringEscapeSeq
+stringContents "string_contents" = stringPlainContents / "\\" stringEscapeSeq { push(tokens, location(), 'escape'); }
 
 singleQuotedStringChunk    "single_quoted_string_chunk"    = stringContents / "\""
 singleQuotedStringContents "single_quoted_string_contents" = singleQuotedStringChunk|..|

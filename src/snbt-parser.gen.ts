@@ -311,7 +311,7 @@ function peg$parse(input, options) {
   var peg$e84 = peg$literalExpectation(";", false);
   var peg$e85 = peg$literalExpectation("]", false);
 
-  var peg$f0 = function(num) { return num._resolve ? num._resolve() : num; };
+  var peg$f0 = function(num) { return num._resolve ? num._resolve(undefined, error) : num; };
   var peg$f1 = function(str) { return str; };
   var peg$f2 = function(map) { return map; };
   var peg$f3 = function(lst) { return lst; };

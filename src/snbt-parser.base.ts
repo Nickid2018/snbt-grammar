@@ -57,7 +57,12 @@ export function createInteger(
   signed?: boolean,
   type?: 'byte' | 'short' | 'int' | 'long'
 ): IntegerValue {
-  return new IntegerValue(BigInt(num), signed ?? true, type ?? null)._resolve();
+  return new IntegerValue(BigInt(num), signed ?? true, type ?? null)._resolve(
+    type,
+    s => {
+      throw new Error(s);
+    }
+  );
 }
 
 export function createFloat(
@@ -340,7 +345,7 @@ export namespace base {
       error('Invalid array element type');
     return {
       type: type,
-      values: list.map(l => l._resolve(type).value),
+      values: list.map(l => l._resolve(type, error).value),
     };
   }
 }

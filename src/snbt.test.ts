@@ -1,5 +1,13 @@
 import { createFloat, createInteger, parse, highlights } from './';
 
+function outputError(fn: () => void) {
+  try {
+    fn();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 describe('test snbt parser', () => {
   it('should success', () => {
     expect(parse('0')).toStrictEqual(createInteger(0));
@@ -31,9 +39,9 @@ describe('test snbt parser', () => {
       type: 'byte',
       values: [20n, 0x11n],
     });
-    expect(parse('[L;20, 0x111111111111111111]')).toStrictEqual({
+    expect(parse('[L;20, 0x1111111111111111]')).toStrictEqual({
       type: 'long',
-      values: [20n, 0x111111111111111111n],
+      values: [20n, 0x1111111111111111n],
     });
     expect(parse('[ {  }, {  } ]')).toStrictEqual([{}, {}]);
     expect(parse('tt')).toStrictEqual('tt');
@@ -77,9 +85,13 @@ describe('test snbt parser', () => {
     ]);
     expect(highlights('"hel\\rl\\to"')).toStrictEqual([
       { start: 1, end: 10, type: 'string' },
+      { start: 4, end: 6, type: 'escape' },
+      { start: 7, end: 9, type: 'escape' },
     ]);
     expect(highlights('"hel\\u0027l\\x22o"')).toStrictEqual([
       { start: 1, end: 16, type: 'string' },
+      { start: 4, end: 10, type: 'escape' },
+      { start: 11, end: 15, type: 'escape' },
     ]);
     expect(highlights('{a:bb,   b   :   22}')).toStrictEqual([
       { start: 1, end: 2, type: 'key' },

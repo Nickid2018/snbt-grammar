@@ -13,14 +13,14 @@ ${parser}
 `;
 parser = parser.replaceAll(
   'function error(message, location)',
-  'function error(message, location?)'
+  'function error(message, location?)',
 );
 parser = parser.replaceAll(
   'function peg$computeLocation(startPos, endPos, offset)',
-  'function peg$computeLocation(startPos, endPos, offset?)'
+  'function peg$computeLocation(startPos, endPos, offset?)',
 );
 parser = parser.replaceAll(
   'function peg$SyntaxError(message, expected, found, location)',
-  'function peg$SyntaxError(message, expected, found, location): void'
+  'function peg$SyntaxError(message, expected, found, location): void',
 );
 fs.writeFileSync('./src/snbt-parser.gen.ts', parser);

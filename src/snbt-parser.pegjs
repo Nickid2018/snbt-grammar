@@ -1,5 +1,5 @@
 literal "literal"
-  = &startNumber num:(float / integer)   { return num._resolve ? num._resolve() : num; }
+  = &startNumber num:(float / integer)   { return num._resolve ? num._resolve(undefined, error) : num; }
   / &quote       str:quotedStringLiteral { return str; }
   / &map         map:mapLiteral          { return map; }
   / &list        lst:listLiteral         { return lst; }

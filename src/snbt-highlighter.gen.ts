@@ -320,14 +320,15 @@ function peg$parse(input, options) {
   var peg$f12 = function() { push(tokens, location(), 'number'); };
   var peg$f13 = function() { push(tokens, location(), 'number'); };
   var peg$f14 = function() { push(tokens, location(), 'number'); };
-  var peg$f15 = function() { push(tokens, location(), 'string'); };
+  var peg$f15 = function() { push(tokens, location(), 'escape'); };
   var peg$f16 = function() { push(tokens, location(), 'string'); };
-  var peg$f17 = function() { push(tokens, location(), 'operation'); };
-  var peg$f18 = function() { push(tokens, location(), 'string');    };
-  var peg$f19 = function() { push(tokens, location(), 'key'); };
+  var peg$f17 = function() { push(tokens, location(), 'string'); };
+  var peg$f18 = function() { push(tokens, location(), 'operation'); };
+  var peg$f19 = function() { push(tokens, location(), 'string');    };
   var peg$f20 = function() { push(tokens, location(), 'key'); };
   var peg$f21 = function() { push(tokens, location(), 'key'); };
-  var peg$f22 = function() { push(tokens, location(), 'arrayType'); };
+  var peg$f22 = function() { push(tokens, location(), 'key'); };
+  var peg$f23 = function() { push(tokens, location(), 'arrayType'); };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;
   var peg$posDetailsCache = [{ line: 1, column: 1 }];
@@ -1642,8 +1643,8 @@ function peg$parse(input, options) {
       if (s1 !== peg$FAILED) {
         s2 = peg$parsestringEscapeSeq();
         if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
-          s0 = s1;
+          peg$savedPos = s0;
+          s0 = peg$f15();
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -1758,7 +1759,7 @@ function peg$parse(input, options) {
       s2 = peg$currPos;
       s3 = peg$parsedoubleQuotedStringContents();
       peg$savedPos = s2;
-      s3 = peg$f15();
+      s3 = peg$f16();
       s2 = s3;
       if (input.charCodeAt(peg$currPos) === 34) {
         s3 = peg$c9;
@@ -1791,7 +1792,7 @@ function peg$parse(input, options) {
         s2 = peg$currPos;
         s3 = peg$parsesingleQuotedStringContents();
         peg$savedPos = s2;
-        s3 = peg$f16();
+        s3 = peg$f17();
         s2 = s3;
         if (input.charCodeAt(peg$currPos) === 39) {
           s3 = peg$c10;
@@ -1938,7 +1939,7 @@ function peg$parse(input, options) {
     s2 = peg$parseunquotedString();
     if (s2 !== peg$FAILED) {
       peg$savedPos = s1;
-      s2 = peg$f17();
+      s2 = peg$f18();
     }
     s1 = s2;
     if (s1 !== peg$FAILED) {
@@ -1984,7 +1985,7 @@ function peg$parse(input, options) {
       s1 = peg$parseunquotedString();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$f18();
+        s1 = peg$f19();
       }
       s0 = s1;
     }
@@ -2027,7 +2028,7 @@ function peg$parse(input, options) {
       s2 = peg$currPos;
       s3 = peg$parsedoubleQuotedStringContents();
       peg$savedPos = s2;
-      s3 = peg$f19();
+      s3 = peg$f20();
       s2 = s3;
       if (input.charCodeAt(peg$currPos) === 34) {
         s3 = peg$c9;
@@ -2060,7 +2061,7 @@ function peg$parse(input, options) {
         s2 = peg$currPos;
         s3 = peg$parsesingleQuotedStringContents();
         peg$savedPos = s2;
-        s3 = peg$f20();
+        s3 = peg$f21();
         s2 = s3;
         if (input.charCodeAt(peg$currPos) === 39) {
           s3 = peg$c10;
@@ -2085,7 +2086,7 @@ function peg$parse(input, options) {
         s1 = peg$parseunquotedString();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$f21();
+          s1 = peg$f22();
         }
         s0 = s1;
       }
@@ -2361,7 +2362,7 @@ function peg$parse(input, options) {
     }
     if (s1 !== peg$FAILED) {
       peg$savedPos = s0;
-      s1 = peg$f22();
+      s1 = peg$f23();
     }
     s0 = s1;
     peg$silentFails--;
